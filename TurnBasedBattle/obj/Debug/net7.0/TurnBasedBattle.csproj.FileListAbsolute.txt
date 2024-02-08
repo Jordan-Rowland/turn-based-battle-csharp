@@ -1,0 +1,15 @@
+/Users/jordanrowland/projects/csh/turn-based-battle/TurnBasedBattle/bin/Debug/net7.0/TurnBasedBattle
+/Users/jordanrowland/projects/csh/turn-based-battle/TurnBasedBattle/bin/Debug/net7.0/TurnBasedBattle.deps.json
+/Users/jordanrowland/projects/csh/turn-based-battle/TurnBasedBattle/bin/Debug/net7.0/TurnBasedBattle.runtimeconfig.json
+/Users/jordanrowland/projects/csh/turn-based-battle/TurnBasedBattle/bin/Debug/net7.0/TurnBasedBattle.dll
+/Users/jordanrowland/projects/csh/turn-based-battle/TurnBasedBattle/bin/Debug/net7.0/TurnBasedBattle.pdb
+/Users/jordanrowland/projects/csh/turn-based-battle/TurnBasedBattle/obj/Debug/net7.0/TurnBasedBattle.csproj.AssemblyReference.cache
+/Users/jordanrowland/projects/csh/turn-based-battle/TurnBasedBattle/obj/Debug/net7.0/TurnBasedBattle.GeneratedMSBuildEditorConfig.editorconfig
+/Users/jordanrowland/projects/csh/turn-based-battle/TurnBasedBattle/obj/Debug/net7.0/TurnBasedBattle.AssemblyInfoInputs.cache
+/Users/jordanrowland/projects/csh/turn-based-battle/TurnBasedBattle/obj/Debug/net7.0/TurnBasedBattle.AssemblyInfo.cs
+/Users/jordanrowland/projects/csh/turn-based-battle/TurnBasedBattle/obj/Debug/net7.0/TurnBasedBattle.csproj.CoreCompileInputs.cache
+/Users/jordanrowland/projects/csh/turn-based-battle/TurnBasedBattle/obj/Debug/net7.0/TurnBasedBattle.dll
+/Users/jordanrowland/projects/csh/turn-based-battle/TurnBasedBattle/obj/Debug/net7.0/refint/TurnBasedBattle.dll
+/Users/jordanrowland/projects/csh/turn-based-battle/TurnBasedBattle/obj/Debug/net7.0/TurnBasedBattle.pdb
+/Users/jordanrowland/projects/csh/turn-based-battle/TurnBasedBattle/obj/Debug/net7.0/TurnBasedBattle.genruntimeconfig.cache
+/Users/jordanrowland/projects/csh/turn-based-battle/TurnBasedBattle/obj/Debug/net7.0/ref/TurnBasedBattle.dll
