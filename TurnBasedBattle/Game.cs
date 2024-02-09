@@ -4,6 +4,8 @@ class Game
     public Party EnemyParty { get; set; }
     public Party[] EnemyParties { get; init; }
 
+    // TODO: Have a better display of character health, etc.
+
     public Game()
     {
         MainParty = new(
@@ -11,11 +13,12 @@ class Game
             new List<Inventory.Item>() {
                 new Inventory.HealthPotion(),
                 new Inventory.HealthPotion(),
+                new Inventory.PhoenixDown(),
                 new Inventory.HealthPotion(),
                 new Inventory.Poison(),
             },
             new Character.Hero() { Name = "Hiro" },
-            new Character.Hero() { Name = "Aya" }
+            new Character.Hero() { Name = "Aya", HP = 5 }
         );
         EnemyParties = new Party[] {
             new(
@@ -82,14 +85,11 @@ class Game
 
     private void PlayTurn(Party party, string player)
     {
-        Character.ICharacter character = party.GetCharacter();
+        Character.CCharacter character = party.GetCharacter();
         bool isComputer = player.ToLower() == "computer";
         while (true)
         {
-            Console.WriteLine(
-                $"It is {character.Name}'s turn ({character.HP}/{character.MaxHP} Health)..."
-            );
-            DisplayUserActions();
+            Display.DisplayUserActions(character);
             if (player.ToLower() == "computer") Console.WriteLine();
             else Console.Write(" > ");
             if (isComputer)
@@ -97,7 +97,9 @@ class Game
                 // TODO: Need logic to compute how computer enemy will react
                 Random r = new();
                 Party opposingParty = party == MainParty ? EnemyParty : MainParty;
-                character.Attack(opposingParty.Members[r.Next(opposingParty.Members.Length)]);
+                var targetCharacter = opposingParty.Members[r.Next(opposingParty.Members.Length)];
+                int damage = character.Attack(targetCharacter);
+                Display.DisplayAttackInfo(character, targetCharacter, damage);
             }
             else
             {
@@ -107,12 +109,10 @@ class Game
                         SelectAndAttackCharacter();
                         break;
                     case Action.UseItem:
-                        if (party.Items!.Any())
-                        {
-                            Inventory.Item? chosenItem = ChoseItem(party);
-                            if (chosenItem == null) continue;
-                            UseItemOnCharacter(character, chosenItem);
-                        }
+                        if (!party.Items!.Any()) continue;
+                        Inventory.Item? chosenItem = ChoseItem(party);
+                        if (chosenItem == null) continue;
+                        UseItemOnCharacter(character, chosenItem);
                         break;
                     default:
                         character.Pass();
@@ -124,20 +124,28 @@ class Game
 
         void SelectAndAttackCharacter()
         {
-            DisplayTargetCharacters();
-            character.Attack(GetUserInputTargetCharacter(Console.ReadLine()));
+            //!! Possibly Use a record and return attack data and print this in the enclosing block instead
+            //!! of inside this
+            Display.DisplayTargetCharacters(MainParty, EnemyParty);
+            Character.CCharacter targetCharacter = GetUserInputTargetCharacter(Console.ReadLine());
+            int damage = character.Attack(targetCharacter);
+            Display.DisplayAttackInfo(character, targetCharacter, damage);
         }
 
         static Inventory.Item? ChoseItem(Party party)
         {
-            DisplayItems(party.Items!);
-            return GetUserInputItem(Console.ReadLine(), party.Items!);;
+            Display.DisplayItems(party.Items!);
+            return GetUserInputItem(Console.ReadLine(), party.Items!); ;
         }
 
-        void UseItemOnCharacter(Character.ICharacter character, Inventory.Item? chosenItem)
+        void UseItemOnCharacter(Character.CCharacter character, Inventory.Item? chosenItem)
         {
-            DisplayTargetCharacters();
-            character.UseItem(chosenItem!, GetUserInputTargetCharacter(Console.ReadLine(), character));
+            Display.DisplayTargetCharacters(MainParty, EnemyParty);
+            Character.CCharacter targetCharacter = GetUserInputTargetCharacter(Console.ReadLine(), character);
+            targetCharacter.UseItem(chosenItem!);
+            Console.WriteLine(
+                $"{character.Name} used {chosenItem!.Name} on {targetCharacter.Name}"
+            );
         }
     }
 
@@ -155,7 +163,7 @@ class Game
         else return Action.Pass;
     }
 
-    private Character.ICharacter GetUserInputTargetCharacter(string? input, Character.ICharacter? character = null)
+    private Character.CCharacter GetUserInputTargetCharacter(string? input, Character.CCharacter? character = null)
     {
         if (int.TryParse(input, out int value))
         {
@@ -166,44 +174,7 @@ class Game
                 return EnemyParty.Members[value - 1];
             }
         }
-        return character ?? EnemyParty.Members[0];
-    }
-
-    readonly Dictionary<int, string> actions = new()
-    {
-        [1] = "Attack",
-        [2] = "Use Item",
-        [0] = "Pass",
-    };
-    private void DisplayUserActions()
-    {
-        Console.WriteLine("Select a user action: ");
-        foreach ((int i, string a) in actions) Console.WriteLine($"{i}: {a}");
-    }
-
-    private void DisplayTargetCharacters()
-    {
-        int idx = 1;
-        foreach (Character.ICharacter c in MainParty.Members)
-        {
-            Console.WriteLine($"    {idx}: {c.Name} {(c.Dead ? "(Dead) " : $"({c.HP}/{c.MaxHP} Health) ")}(My Party)");
-            idx += 1;
-        }
-        foreach (Character.ICharacter c in EnemyParty.Members)
-        {
-            Console.WriteLine($"    {idx}: {c.Name} {(c.Dead ? "(Dead) " : $"({c.HP}/{c.MaxHP} Health) ")}(Enemy Party)");
-            idx += 1;
-        }
-    }
-
-    private static void DisplayItems(List<Inventory.Item> items)
-    {
-        int idx = 1;
-        foreach (Inventory.Item item in items)
-        {
-            Console.WriteLine($"    {idx}: {item.Name}");
-            idx += 1;
-        }
+        return character ?? (from m in EnemyParty.Members where !m.Dead select m).ToList()[0];
     }
 
     private static Inventory.Item? GetUserInputItem(string? input, List<Inventory.Item> items)
@@ -215,6 +186,58 @@ class Game
             return chosenItem;
         }
         return null;
+    }
+
+    static class Display
+    {
+        static readonly Dictionary<int, string> actions = new()
+        {
+            [1] = "Attack",
+            [2] = "Use Item",
+            [0] = "Pass",
+        };
+
+        public static void DisplayUserActions(Character.CCharacter character)
+        {
+            Console.WriteLine(
+                $"It is {character.Name}'s turn ({character.HP}/{character.MaxHP} Health)..."
+            );
+            Console.WriteLine("Select a user action: ");
+            foreach ((int i, string a) in actions) Console.WriteLine($"{i}: {a}");
+        }
+
+        public static void DisplayTargetCharacters(Party mainParty, Party enemyParty)
+        {
+            int idx = 1;
+            foreach (Character.CCharacter c in mainParty.Members)
+            {
+                Console.WriteLine($"    {idx}: {c.Name} {(c.Dead ? "(Dead) " : $"({c.HP}/{c.MaxHP} Health) ")}(My Party)");
+                idx += 1;
+            }
+            foreach (Character.CCharacter c in enemyParty.Members)
+            {
+                Console.WriteLine($"    {idx}: {c.Name} {(c.Dead ? "(Dead) " : $"({c.HP}/{c.MaxHP} Health) ")}(Enemy Party)");
+                idx += 1;
+            }
+        }
+
+        public static void DisplayItems(List<Inventory.Item> items)
+        {
+            int idx = 1;
+            foreach (Inventory.Item item in items)
+            {
+                Console.WriteLine($"    {idx}: {item.Name}");
+                idx += 1;
+            }
+        }
+
+        public static void DisplayAttackInfo(Character.CCharacter character, Character.CCharacter targetCharacter, int damage)
+        {
+            Console.WriteLine(
+                $"{character.Name} used {character.StandardAttack} " +
+                $"on {targetCharacter.Name} for {damage} damage"
+            );
+        }
     }
 
     public enum Action { Pass, Attack, UseItem }

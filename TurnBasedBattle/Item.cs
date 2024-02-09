@@ -4,7 +4,7 @@ public class Item
 {
     public string? Name { get; init; }
     public ItemType Type { get; init; }
-    public int? Modifier { get; set; }
+    public int? Value { get; set; }
 }
 
 class HealthPotion : Item
@@ -13,7 +13,7 @@ class HealthPotion : Item
     {
         Name = "Health Potion";
         Type = ItemType.Heal;
-        Modifier = 10;
+        Value = 10;
     }
 }
 
@@ -23,7 +23,7 @@ class Poison : Item
     {
         Name = "Poison";
         Type = ItemType.Damage;
-        Modifier = 7;
+        Value = 7;
     }
 }
 

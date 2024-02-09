@@ -1,12 +1,12 @@
 
 class Party
 {
-    public Character.ICharacter[] Members { get; }
+    public Character.CCharacter[] Members { get; }
     public int Turn { get; set; }
     public string Player { get; }
     public List<Inventory.Item>? Items { get; set; }
 
-    public Party(string player, List<Inventory.Item> items, params Character.ICharacter[] members)
+    public Party(string player, List<Inventory.Item> items, params Character.CCharacter[] members)
     {
         Player = player;
         Items = items;
@@ -15,9 +15,9 @@ class Party
 
     public bool IsActive() => (from m in Members where !m.Dead select m).Any();
     public void IncrementTurn() => Turn = Turn < Members.Length - 1 ? Turn + 1 : 0;
-    public Character.ICharacter GetCharacter()
+    public Character.CCharacter GetCharacter()
     {
-        Character.ICharacter character = Members[Turn];
+        Character.CCharacter character = Members[Turn];
         while (character.Dead)
         {
             IncrementTurn();
