@@ -98,7 +98,7 @@ class Game
                 Random r = new();
                 Party opposingParty = party == MainParty ? EnemyParty : MainParty;
                 var targetCharacter = opposingParty.Members[r.Next(opposingParty.Members.Length)];
-                int damage = character.Attack(targetCharacter);
+                int damage = character.PerformAttack(targetCharacter);
                 Display.DisplayAttackInfo(character, targetCharacter, damage);
             }
             else
@@ -128,7 +128,7 @@ class Game
             //!! of inside this
             Display.DisplayTargetCharacters(MainParty, EnemyParty);
             Character.CCharacter targetCharacter = GetUserInputTargetCharacter(Console.ReadLine());
-            int damage = character.Attack(targetCharacter);
+            int damage = character.PerformAttack(targetCharacter);
             Display.DisplayAttackInfo(character, targetCharacter, damage);
         }
 
@@ -234,7 +234,7 @@ class Game
         public static void DisplayAttackInfo(Character.CCharacter character, Character.CCharacter targetCharacter, int damage)
         {
             Console.WriteLine(
-                $"{character.Name} used {character.StandardAttack} " +
+                $"{character.Name} used {character.AttackBehavior!.Name} " +
                 $"on {targetCharacter.Name} for {damage} damage"
             );
         }
