@@ -16,17 +16,16 @@ class Game
                 new Inventory.PhoenixDown(),
                 new Inventory.HealthPotion(),
                 new Inventory.Poison(),
-            },
-            new Character.Hero() { Name = "Hiro" },
-            new Character.Hero() { Name = "Aya", HP = 5 }
+            }
         );
+        new Characters.Hero(MainParty) { Name = "Hiro" };
+        new Characters.Hero(MainParty) { Name = "Aya", HP = 5 };
         EnemyParties = new Party[] {
             new(
                 "Computer",
                 new List<Inventory.Item>() {
                     new Inventory.HealthPotion(),
-                },
-                new Character.Skeleton()
+                }
             ),
             new(
                 "Computer",
@@ -34,9 +33,7 @@ class Game
                     new Inventory.HealthPotion(),
                     new Inventory.Poison(),
                     new Inventory.PhoenixDown(),
-                },
-                new Character.Skeleton(),
-                new Character.Skeleton()
+                }
             ),
             new(
                 "Computer",
@@ -46,10 +43,14 @@ class Game
                     new Inventory.HealthPotion(),
                     new Inventory.Poison(),
                     new Inventory.Poison(),
-                },
-                new Character.UncodedOne()
+                }
             ),
         };
+
+        new Characters.Skeleton(EnemyParties[0]);
+        new Characters.Skeleton(EnemyParties[1]);
+        new Characters.Skeleton(EnemyParties[1]);
+        new Characters.UncodedOne(EnemyParties[2]);
         EnemyParty = EnemyParties[0];
     }
 
@@ -85,7 +86,7 @@ class Game
 
     private void PlayTurn(Party party, string player)
     {
-        Character.CCharacter character = party.GetCharacter();
+        Characters.Character character = party.GetCharacter();
         bool isComputer = player.ToLower() == "computer";
         while (true)
         {
@@ -97,7 +98,7 @@ class Game
                 // TODO: Need logic to compute how computer enemy will react
                 Random r = new();
                 Party opposingParty = party == MainParty ? EnemyParty : MainParty;
-                var targetCharacter = opposingParty.Members[r.Next(opposingParty.Members.Length)];
+                var targetCharacter = opposingParty.Members![r.Next(opposingParty.Members.Count)];
                 int damage = character.PerformAttack(targetCharacter);
                 Display.DisplayAttackInfo(character, targetCharacter, damage);
             }
@@ -127,7 +128,7 @@ class Game
             //!! Possibly Use a record and return attack data and print this in the enclosing block instead
             //!! of inside this
             Display.DisplayTargetCharacters(MainParty, EnemyParty);
-            Character.CCharacter targetCharacter = GetUserInputTargetCharacter(Console.ReadLine());
+            Characters.Character targetCharacter = GetUserInputTargetCharacter(Console.ReadLine());
             int damage = character.PerformAttack(targetCharacter);
             Display.DisplayAttackInfo(character, targetCharacter, damage);
         }
@@ -138,10 +139,10 @@ class Game
             return GetUserInputItem(Console.ReadLine(), party.Items!); ;
         }
 
-        void UseItemOnCharacter(Character.CCharacter character, Inventory.Item? chosenItem)
+        void UseItemOnCharacter(Characters.Character character, Inventory.Item? chosenItem)
         {
             Display.DisplayTargetCharacters(MainParty, EnemyParty);
-            Character.CCharacter targetCharacter = GetUserInputTargetCharacter(Console.ReadLine(), character);
+            Characters.Character targetCharacter = GetUserInputTargetCharacter(Console.ReadLine(), character);
             targetCharacter.UseItem(chosenItem!);
             Console.WriteLine(
                 $"{character.Name} used {chosenItem!.Name} on {targetCharacter.Name}"
@@ -163,14 +164,14 @@ class Game
         else return Action.Pass;
     }
 
-    private Character.CCharacter GetUserInputTargetCharacter(string? input, Character.CCharacter? character = null)
+    private Characters.Character GetUserInputTargetCharacter(string? input, Characters.Character? character = null)
     {
         if (int.TryParse(input, out int value))
         {
-            if (value <= MainParty.Members.Length) return MainParty.Members[value - 1];
-            else if (value <= MainParty.Members.Length + EnemyParty.Members.Length)
+            if (value <= MainParty.Members!.Count) return MainParty.Members[value - 1];
+            else if (value <= MainParty.Members.Count + EnemyParty.Members!.Count)
             {
-                value -= MainParty.Members.Length;
+                value -= MainParty.Members.Count;
                 return EnemyParty.Members[value - 1];
             }
         }
@@ -197,7 +198,7 @@ class Game
             [0] = "Pass",
         };
 
-        public static void DisplayUserActions(Character.CCharacter character)
+        public static void DisplayUserActions(Characters.Character character)
         {
             Console.WriteLine(
                 $"It is {character.Name}'s turn ({character.HP}/{character.MaxHP} Health)..."
@@ -209,12 +210,12 @@ class Game
         public static void DisplayTargetCharacters(Party mainParty, Party enemyParty)
         {
             int idx = 1;
-            foreach (Character.CCharacter c in mainParty.Members)
+            foreach (Characters.Character c in mainParty.Members!)
             {
                 Console.WriteLine($"    {idx}: {c.Name} {(c.Dead ? "(Dead) " : $"({c.HP}/{c.MaxHP} Health) ")}(My Party)");
                 idx += 1;
             }
-            foreach (Character.CCharacter c in enemyParty.Members)
+            foreach (Characters.Character c in enemyParty.Members!)
             {
                 Console.WriteLine($"    {idx}: {c.Name} {(c.Dead ? "(Dead) " : $"({c.HP}/{c.MaxHP} Health) ")}(Enemy Party)");
                 idx += 1;
@@ -231,7 +232,7 @@ class Game
             }
         }
 
-        public static void DisplayAttackInfo(Character.CCharacter character, Character.CCharacter targetCharacter, int damage)
+        public static void DisplayAttackInfo(Characters.Character character, Characters.Character targetCharacter, int damage)
         {
             Console.WriteLine(
                 $"{character.Name} used {character.AttackBehavior!.Name} " +

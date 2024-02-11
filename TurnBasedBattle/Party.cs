@@ -1,23 +1,24 @@
 
-class Party
+public class Party
 {
-    public Character.CCharacter[] Members { get; }
+    public event Action<int>? PartyEnchant;
+
+    public List<Characters.Character> Members { get; } = new();
     public int Turn { get; set; }
     public string Player { get; }
     public List<Inventory.Item>? Items { get; set; }
 
-    public Party(string player, List<Inventory.Item> items, params Character.CCharacter[] members)
+    public Party(string player, List<Inventory.Item> items)
     {
         Player = player;
         Items = items;
-        Members = members;
     }
 
     public bool IsActive() => (from m in Members where !m.Dead select m).Any();
-    public void IncrementTurn() => Turn = Turn < Members.Length - 1 ? Turn + 1 : 0;
-    public Character.CCharacter GetCharacter()
+    public void IncrementTurn() => Turn = Turn < Members!.Count - 1 ? Turn + 1 : 0;
+    public Characters.Character GetCharacter()
     {
-        Character.CCharacter character = Members[Turn];
+        Characters.Character character = Members![Turn];
         while (character.Dead)
         {
             IncrementTurn();

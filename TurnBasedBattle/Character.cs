@@ -1,15 +1,22 @@
-namespace Character;
+namespace Characters;
 
-public abstract class CCharacter
+public abstract class Character
 {
     public virtual string? Name { get; init; }
     public virtual int HP { get; set; }
     public virtual int MaxHP { get; init; }
     public virtual bool Dead { get; set; }
     public virtual IAttackBehavior? AttackBehavior { get; set; }
+    public virtual Party? Party { get; set; }
 
-    public virtual int PerformAttack(CCharacter targetCharacter) => AttackBehavior!.Attack(targetCharacter);
-    
+    public Character(Party party)
+    {
+        Party = party;
+        Party.Members?.Add(this);
+    }
+
+    public virtual int PerformAttack(Character targetCharacter) => AttackBehavior!.Attack(targetCharacter);
+
     public void Pass() => Console.WriteLine($"{Name} did NOTHING");
 
     public void TakeDamage(int? damage)
@@ -45,35 +52,44 @@ public abstract class CCharacter
     }
 }
 
-class Hero : CCharacter
+class Hero : Character
 {
     public override string? Name { get; init; } = "Hero";
     public override int HP { get; set; } = 25;
     public override int MaxHP { get; init; } = 25;
     public override bool Dead { get; set; } = false;
     public override IAttackBehavior? AttackBehavior { get; set; } = new Punch();
+    public override Party? Party { get; set; }
+    public Hero(Party party) : base(party) => Party!.PartyEnchant += InheritEnchantment;
 
-    public override int PerformAttack(CCharacter targetCharacter) => AttackBehavior!.Attack(targetCharacter);
+    public override int PerformAttack(Character targetCharacter) => AttackBehavior!.Attack(targetCharacter);
+    public void InheritEnchantment(int value) {}
 }
 
-class Skeleton : CCharacter
+class Skeleton : Character
 {
     public override string? Name { get; init; } = "SKELETON";
     public override int HP { get; set; } = 5;
     public override int MaxHP { get; init; } = 5;
     public override bool Dead { get; set; } = false;
     public override IAttackBehavior? AttackBehavior { get; set; } = new BoneCrunch();
+    public override Party? Party { get; set; }
+    public Skeleton(Party party) : base(party) => Party!.PartyEnchant += InheritEnchantment;
 
-    public override int PerformAttack(CCharacter targetCharacter) => AttackBehavior!.Attack(targetCharacter);
+    public override int PerformAttack(Character targetCharacter) => AttackBehavior!.Attack(targetCharacter);
+    public void InheritEnchantment(int value) {}
 }
 
-class UncodedOne : CCharacter
+class UncodedOne : Character
 {
     public override string? Name { get; init; } = "Uncoded One";
     public override int HP { get; set; } = 40;
     public override int MaxHP { get; init; } = 40;
     public override bool Dead { get; set; } = false;
-    public override IAttackBehavior? AttackBehavior { get; set; } = new Punch();
+    public override IAttackBehavior? AttackBehavior { get; set; } = new UnRaveling();
+    public override Party? Party { get; set; }
+    public UncodedOne(Party party) : base(party) => Party!.PartyEnchant += InheritEnchantment;
 
-    public override int PerformAttack(CCharacter targetCharacter) => AttackBehavior!.Attack(targetCharacter);
+    public override int PerformAttack(Character targetCharacter) => AttackBehavior!.Attack(targetCharacter);
+    public void InheritEnchantment(int value) {}
 }
