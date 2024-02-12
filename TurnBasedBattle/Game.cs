@@ -49,7 +49,7 @@ class Game
 
         new Characters.Skeleton(EnemyParties[0]);
         new Characters.Skeleton(EnemyParties[1]);
-        new Characters.Skeleton(EnemyParties[1]);
+        new Characters.Goblin(EnemyParties[1]);
         new Characters.UncodedOne(EnemyParties[2]);
         EnemyParty = EnemyParties[0];
     }

@@ -27,7 +27,20 @@ public class BoneCrunch : IAttackBehavior
             return r.Next(2);
         }
     }
+}
 
+public class Scratch : IAttackBehavior
+{
+    public string Name { get; } = "SCRATCH";
+    public int Damage
+    {
+        get
+        {
+            Random r = new();
+            if (r.Next(20) == 19) return 7;
+            return r.Next(3);
+        }
+    }
 }
 
 public class UnRaveling : IAttackBehavior
@@ -41,7 +54,6 @@ public class UnRaveling : IAttackBehavior
             return r.Next(3);
         }
     }
-
 }
 
 public abstract class AttackModifierDecorator : IAttackBehavior
