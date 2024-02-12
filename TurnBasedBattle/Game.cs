@@ -19,7 +19,7 @@ class Game
             }
         );
         new Characters.Hero(MainParty) { Name = "Hiro" };
-        new Characters.Hero(MainParty) { Name = "Aya", HP = 5 };
+        new Characters.Hero(MainParty) { Name = "Aya", HP = 5, AttackBehavior = new DoubleModifier(new Punch()) };
         EnemyParties = new Party[] {
             new(
                 "Computer",
