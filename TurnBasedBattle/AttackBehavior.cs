@@ -1,7 +1,7 @@
 
 public interface IAttackBehavior
 {
-    public string? Name { get; }
+    public string Name { get; }
     public int Damage { get; }
     public int Attack(Characters.Character targetCharacter)
     {
@@ -58,9 +58,9 @@ public class UnRaveling : IAttackBehavior
 
 public abstract class AttackModifierDecorator : IAttackBehavior
 {
-    public IAttackBehavior? BaseAttack;
-    public virtual int Damage { get; }
-    public virtual string? Name { get; }
+    public IAttackBehavior? BaseAttack { get; init; }
+    public int Damage { get; init; }
+    public string Name { get; init; } = "";
 }
 
 public class DoubleModifier : AttackModifierDecorator
@@ -68,10 +68,9 @@ public class DoubleModifier : AttackModifierDecorator
     public DoubleModifier(IAttackBehavior baseAttack)
     {
         BaseAttack = baseAttack;
-        Name = $"DOUBLE {BaseAttack!.Name}";
+        Name = $"DOUBLE {BaseAttack.Name}";
+        Damage = BaseAttack.Damage * 2;
     }
-    public override int Damage { get => BaseAttack!.Damage * 2; }
-    public override string? Name { get; }
 }
 
 public class TripleModifier : AttackModifierDecorator
@@ -79,8 +78,7 @@ public class TripleModifier : AttackModifierDecorator
     public TripleModifier(IAttackBehavior baseAttack)
     {
         BaseAttack = baseAttack;
-        Name = $"TRIPLE {BaseAttack!.Name}";
+        Name = $"TRIPLE {BaseAttack.Name}";
+        Damage = BaseAttack.Damage * 3;
     }
-    public override int Damage { get => BaseAttack!.Damage * 3; }
-    public override string? Name { get; }
 }

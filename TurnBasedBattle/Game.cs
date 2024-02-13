@@ -1,3 +1,5 @@
+using Inventory;
+
 class Game
 {
     public Party MainParty { get; init; }
@@ -10,47 +12,52 @@ class Game
     {
         MainParty = new(
             "Player1",
-            new List<Inventory.Item>() {
-                new Inventory.HealthPotion(),
-                new Inventory.HealthPotion(),
-                new Inventory.PhoenixDown(),
-                new Inventory.HealthPotion(),
-                new Inventory.Poison(),
+            new List<Item>() {
+                SimpleItemFactory.CreateItem(ItemType.HealthPotion),
+                SimpleItemFactory.CreateItem(ItemType.HealthPotion),
+                SimpleItemFactory.CreateItem(ItemType.HealthPotion),
+                SimpleItemFactory.CreateItem(ItemType.PhoenixDown),
+                SimpleItemFactory.CreateItem(ItemType.Poison),
             }
         );
         new Characters.Hero(MainParty) { Name = "Hiro" };
-        new Characters.Hero(MainParty) { Name = "Aya", HP = 5, AttackBehavior = new DoubleModifier(new Punch()) };
+        new Characters.Hero(MainParty)
+        {
+            Name = "Aya",
+            HP = 5,
+            AttackBehavior = new DoubleModifier(new Punch()),
+        };
         EnemyParties = new Party[] {
             new(
                 "Computer",
-                new List<Inventory.Item>() {
-                    new Inventory.HealthPotion(),
+                new List<Item>() {
+                    SimpleItemFactory.CreateItem(ItemType.HealthPotion),
                 }
             ),
             new(
                 "Computer",
-                new List<Inventory.Item>() {
-                    new Inventory.HealthPotion(),
-                    new Inventory.Poison(),
-                    new Inventory.PhoenixDown(),
+                new List<Item>() {
+                    SimpleItemFactory.CreateItem(ItemType.HealthPotion),
+                    SimpleItemFactory.CreateItem(ItemType.Poison),
+                    SimpleItemFactory.CreateItem(ItemType.PhoenixDown),
                 }
             ),
             new(
                 "Computer",
-                new List<Inventory.Item>() {
-                    new Inventory.HealthPotion(),
-                    new Inventory.HealthPotion(),
-                    new Inventory.HealthPotion(),
-                    new Inventory.Poison(),
-                    new Inventory.Poison(),
+                new List<Item>() {
+                    SimpleItemFactory.CreateItem(ItemType.HealthPotion),
+                    SimpleItemFactory.CreateItem(ItemType.HealthPotion),
+                    SimpleItemFactory.CreateItem(ItemType.HealthPotion),
+                    SimpleItemFactory.CreateItem(ItemType.Poison),
+                    SimpleItemFactory.CreateItem(ItemType.Poison),
                 }
             ),
         };
 
-        new Characters.Skeleton(EnemyParties[0]);
-        new Characters.Skeleton(EnemyParties[1]);
-        new Characters.Goblin(EnemyParties[1]);
-        new Characters.UncodedOne(EnemyParties[2]);
+        Characters.SimpleEnemyFactory.CreateEnemy(Characters.EnemyType.Skeleton, EnemyParties[0]);
+        Characters.SimpleEnemyFactory.CreateEnemy(Characters.EnemyType.Skeleton, EnemyParties[1]);
+        Characters.SimpleEnemyFactory.CreateEnemy(Characters.EnemyType.Goblin, EnemyParties[1]);
+        Characters.SimpleEnemyFactory.CreateEnemy(Characters.EnemyType.Boss, EnemyParties[2]);
         EnemyParty = EnemyParties[0];
     }
 

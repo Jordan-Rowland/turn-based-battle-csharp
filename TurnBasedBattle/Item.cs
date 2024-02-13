@@ -1,10 +1,10 @@
 namespace Inventory;
 
-public class Item
+public abstract class Item
 {
-    public string? Name { get; init; }
-    public ItemType Type { get; init; }
-    public int? Value { get; set; }
+    public string Name { get; init; } = "";
+    public ItemCategory Category { get; init; }
+    public int Value { get; set; }
 }
 
 class HealthPotion : Item
@@ -12,7 +12,7 @@ class HealthPotion : Item
     public HealthPotion()
     {
         Name = "Health Potion";
-        Type = ItemType.Heal;
+        Category = ItemCategory.Heal;
         Value = 10;
     }
 }
@@ -22,7 +22,7 @@ class Poison : Item
     public Poison()
     {
         Name = "Poison";
-        Type = ItemType.Damage;
+        Category = ItemCategory.Damage;
         Value = 7;
     }
 }
@@ -32,8 +32,24 @@ class PhoenixDown : Item
     public PhoenixDown()
     {
         Name = "Phoenix Down";
-        Type = ItemType.Revive;
+        Category = ItemCategory.Revive;
     }
 }
 
-public enum ItemType { Heal, Revive, Damage }
+public static class SimpleItemFactory
+{
+    public static Item CreateItem(ItemType itemType)
+    {
+        return itemType switch
+        {
+            ItemType.HealthPotion => new HealthPotion(),
+            ItemType.Poison => new Poison(),
+            ItemType.PhoenixDown => new PhoenixDown(),
+            _ => throw new NotImplementedException(),
+        };
+    }
+}
+
+public enum ItemCategory { Heal, Revive, Damage }
+
+public enum ItemType { HealthPotion, Poison, PhoenixDown }
