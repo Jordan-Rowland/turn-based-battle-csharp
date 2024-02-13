@@ -6,9 +6,11 @@ class Game
     public Party EnemyParty { get; set; }
     public Party[] EnemyParties { get; init; }
 
+    public static Game UniqueInstance { get; } = new Game();
+
     // TODO: Have a better display of character health, etc.
 
-    public Game()
+    private Game()
     {
         MainParty = new(
             "Player1",
@@ -26,6 +28,7 @@ class Game
             Name = "Aya",
             HP = 5,
             AttackBehavior = new DoubleModifier(new Punch()),
+            // AttackBehavior = new TripleModifier(new DoubleModifier(new Punch())),
         };
         EnemyParties = new Party[] {
             new(

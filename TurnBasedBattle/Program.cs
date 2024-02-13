@@ -2,7 +2,6 @@
 {
     private static void Main(string[] args)
     {
-        Game game = new();
-        game.RunAllBattles();
+        Game.UniqueInstance.RunAllBattles();
     }
 }
